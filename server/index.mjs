@@ -2,7 +2,13 @@
 import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { closeDb, getDb, getDbStatus, markDbDisconnected } from './lib/db.mjs';
+import { closeDb, getDb, getDbStatus, markDbDisconnected, pingDb } from './lib/db.mjs';
+import {
+  getHeartbeatStatus,
+  registerObservedOrigin,
+  startHeartbeat,
+  stopHeartbeat,
+} from './lib/heartbeat.mjs';
 import * as manifest from './lib/manifest.mjs';
 import { createRateLimiter } from './lib/rateLimit.mjs';
 import { createHealthRouter } from './modules/health.mjs';
@@ -32,8 +38,16 @@ app.use((err, _req, res, next) => {
   next(err);
 });
 
+// Learn public hostname automatically on first external request when env URL is unset
+app.use((req, _res, next) => {
+  registerObservedOrigin(req);
+  next();
+});
+
 // Modular API routers
-app.use('/api/health', createHealthRouter({ getDbStatus }));
+const healthRouter = createHealthRouter({ getDbStatus, pingDb, getHeartbeatStatus });
+app.use('/api/health', healthRouter);
+app.use('/api/heartbeat', healthRouter);
 app.use(
   '/api/wishes',
   createWishesRouter({ getDb, manifest, createRateLimiter, markDbDisconnected })
@@ -77,6 +91,7 @@ if (getDbStatus().dbConfigured) {
 
 const server = app.listen(PORT, () => {
   console.log(`[server] Listening on port ${PORT}`);
+  startHeartbeat({ pingDb, getActiveSlugs: () => manifest.listActiveSlugs() });
 });
 
 let shuttingDown = false;
@@ -85,6 +100,7 @@ async function shutdown() {
     return;
   }
   shuttingDown = true;
+  stopHeartbeat();
   server.close(async () => {
     await closeDb();
     process.exit(0);

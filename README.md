@@ -1,4 +1,4 @@
-# Celebration Cards — Nền Tảng Thiệp Chúc Mừng Đa Dịp Lễ
+﻿# Celebration Cards — Nền Tảng Thiệp Chúc Mừng Đa Dịp Lễ
 
 Nền tảng thiệp chúc mừng điện tử thiết kế độc lập theo từng đường dẫn (**Per-URL Vertical Slice Architecture**), trong đó mỗi đường dẫn thiệp (`/:slug`) là một module tự chứa hoàn toàn (giao diện, bảng màu, font chữ, CSS, hiệu ứng riêng) được tải lười (`React.lazy`) trên nền tảng SDK không giao diện (**Headless Platform SDK**) và **Shared Manifest + SSR Meta** cho Zalo/Facebook preview.
 
@@ -109,3 +109,23 @@ Dự án đã tích hợp sẵn **GitHub Actions** (`.github/workflows/ci-cd.yml
 - **Health Check Path:** `/api/health`
 - **Environment Variables:** `NODE_ENV=production`, `MONGODB_URI=<chuỗi kết nối MongoDB Atlas>` (lưu trên Render Dashboard, không commit vào Git).
 - Sau khi deploy, chia sẻ đường dẫn `https://<ten-service>.onrender.com/vvntx2011` trực tiếp vào nhóm Zalo/Facebook.
+
+## Cơ chế Heartbeat & Keep-Alive (Đảm bảo URL hoạt động lâu dài)
+
+Để đường dẫn thiệp (`https://<ten-service>.onrender.com/vvntx2011`) luôn phản hồi nhanh, hạn chế tối đa tình trạng Render Free Tier đưa service vào trạng thái ngủ (spin-down sau 15 phút không có truy cập) và giữ kết nối MongoDB Atlas ổn định, hệ thống áp dụng cơ chế **Heartbeat 3 lớp**:
+
+1. **Server Self-Ping & MongoDB Keep-Alive (`server/lib/heartbeat.mjs`, `server/lib/db.mjs`)**:
+   - Server tự động định kỳ mỗi `5 phút` gọi `pingDb()` giữ ấm kết nối MongoDB, tự gửi `GET /api/health?source=self` và làm ấm route thiệp đang mở (`/:slug?source=self-warmup`).
+   - Hỗ trợ tự nhận diện URL Render qua `HEARTBEAT_URL` / `RENDER_EXTERNAL_URL` / `RENDER_EXTERNAL_HOSTNAME` / `PUBLIC_BASE_URL`, hoặc tự động học domain `*.onrender.com` từ HTTP request đầu tiên nếu chưa khai báo biến môi trường.
+   - Hai endpoint `GET|HEAD /api/health` và `GET|HEAD /api/heartbeat` đều trả về HTTP `200` kèm header `Cache-Control: no-store` và trạng thái heartbeat hiện tại.
+2. **Client Active-Tab Heartbeat (`src/platform/hooks/useHeartbeat.ts`, tích hợp tại `src/App.tsx`)**:
+   - Khi người dùng đang mở tab thiệp (kể cả tab chạy nền), trình duyệt tự động gửi heartbeat nhẹ tới `/api/health?source=client` mỗi `3 phút` (và gửi ngay khi quay lại tab hoặc có mạng trở lại sau > 60 giây).
+3. **External Scheduled Heartbeat (`.github/workflows/heartbeat.yml`)**:
+   - GitHub Actions chạy tự động mỗi `5 phút` (`*/5 * * * *`) gọi `curl` tới `/api/health?source=github-actions` và `/vvntx2011` để đánh thức container ngay cả khi không có người dùng mở trang.
+   - Có thể thiết lập biến Repository Variable hoặc Secret `APP_PUBLIC_URL` trên GitHub để trỏ tới domain riêng (hoặc kết hợp thêm dịch vụ ngoài như UptimeRobot/Cron-job.org trỏ vào `/api/heartbeat`).
+
+### Biến môi trường tùy chọn cho Heartbeat
+
+- `HEARTBEAT_ENABLED`: Mặc định bật (`true`); đặt `false` để tắt self-heartbeat trên server.
+- `HEARTBEAT_URL`: URL công khai của service dùng cho self-ping (ưu tiên cao nhất; nếu bỏ trống sẽ tự fallback sang `RENDER_EXTERNAL_URL`, `RENDER_EXTERNAL_HOSTNAME`, `PUBLIC_BASE_URL`, hoặc domain bắt được từ request).
+- `HEARTBEAT_INTERVAL_MS`: Chu kỳ self-ping tính bằng mili-giây (mặc định `300000` = 5 phút, tối thiểu `30000`).

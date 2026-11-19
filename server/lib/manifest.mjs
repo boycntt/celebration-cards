@@ -62,3 +62,19 @@ export function getCardBackendOption(slug, optionKey) {
   }
   return card.backendOptions[optionKey] ?? null;
 }
+
+export function listActiveSlugs(now = new Date()) {
+  const activeSlugs = [];
+  for (const card of cards) {
+    if (
+      card &&
+      typeof card.accessSlug === 'string' &&
+      card.accessSlug.trim() &&
+      card.status === 'active' &&
+      isWithinWindow(card, now)
+    ) {
+      activeSlugs.push(card.accessSlug.trim());
+    }
+  }
+  return activeSlugs;
+}

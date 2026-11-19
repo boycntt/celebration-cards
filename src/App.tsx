@@ -1,6 +1,7 @@
 ﻿import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { CARD_ROUTES } from './cards/registry';
 import { NotFoundPage } from './platform/components/NotFoundPage';
+import { useHeartbeat } from './platform/hooks/useHeartbeat';
 import { resolveValidCardRoute } from './platform/router/routeGuard';
 import { extractAccessSlugFromPath } from './platform/router/urlParams';
 
@@ -31,6 +32,8 @@ export const App: React.FC = () => {
     const accessSlug = extractAccessSlugFromPath(pathname);
     return resolveValidCardRoute(CARD_ROUTES, accessSlug);
   }, [pathname]);
+
+  useHeartbeat({ enabled: Boolean(route && route.Component) });
 
   useEffect(() => {
     if (!route || !route.Component) {
