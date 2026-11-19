@@ -1,9 +1,4 @@
-import React, { useEffect, useRef } from 'react';
-import { ParticleTheme } from '../types/occasion';
-
-interface ParticleCanvasProps {
-  theme: ParticleTheme;
-}
+﻿import React, { useEffect, useRef } from 'react';
 
 interface Particle {
   x: number;
@@ -18,26 +13,16 @@ interface Particle {
   color: string;
 }
 
-const THEME_PALETTES: Record<ParticleTheme, { leafColors: string[]; sparkColors: string[] }> = {
-  'bamboo-gold': {
-    leafColors: ['rgba(212, 175, 55, 0.55)', 'rgba(56, 189, 248, 0.35)', 'rgba(245, 208, 111, 0.45)'],
-    sparkColors: ['rgba(253, 230, 138, 0.7)', 'rgba(255, 255, 255, 0.5)'],
-  },
-  'blossom-tet': {
-    leafColors: ['rgba(251, 191, 36, 0.65)', 'rgba(244, 114, 182, 0.55)'],
-    sparkColors: ['rgba(254, 240, 138, 0.75)'],
-  },
-  'petals-pink': {
-    leafColors: ['rgba(249, 168, 212, 0.6)', 'rgba(253, 224, 71, 0.45)'],
-    sparkColors: ['rgba(255, 255, 255, 0.65)'],
-  },
-  'confetti-festive': {
-    leafColors: ['rgba(59, 130, 246, 0.55)', 'rgba(239, 68, 68, 0.55)', 'rgba(234, 179, 8, 0.6)'],
-    sparkColors: ['rgba(255, 255, 255, 0.7)'],
-  },
+const BAMBOO_GOLD_PALETTE = {
+  leafColors: [
+    'rgba(212, 175, 55, 0.55)',
+    'rgba(56, 189, 248, 0.35)',
+    'rgba(245, 208, 111, 0.45)',
+  ],
+  sparkColors: ['rgba(253, 230, 138, 0.7)', 'rgba(255, 255, 255, 0.5)'],
 };
 
-export const ParticleCanvas: React.FC<ParticleCanvasProps> = ({ theme }) => {
+export const BambooParticleCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -47,7 +32,6 @@ export const ParticleCanvas: React.FC<ParticleCanvasProps> = ({ theme }) => {
     if (!ctx) return;
 
     let animationFrameId = 0;
-    const palette = THEME_PALETTES[theme];
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -59,7 +43,7 @@ export const ParticleCanvas: React.FC<ParticleCanvasProps> = ({ theme }) => {
     const count = Math.min(42, Math.max(22, Math.floor(window.innerWidth / 34)));
     const particles: Particle[] = Array.from({ length: count }, () => {
       const isLeaf = Math.random() > 0.42;
-      const colors = isLeaf ? palette.leafColors : palette.sparkColors;
+      const colors = isLeaf ? BAMBOO_GOLD_PALETTE.leafColors : BAMBOO_GOLD_PALETTE.sparkColors;
       return {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -129,7 +113,7 @@ export const ParticleCanvas: React.FC<ParticleCanvasProps> = ({ theme }) => {
       window.cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
     };
-  }, [theme]);
+  }, []);
 
   return (
     <canvas

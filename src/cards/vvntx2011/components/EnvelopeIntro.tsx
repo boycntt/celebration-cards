@@ -1,10 +1,10 @@
 ﻿import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { MailOpen } from 'lucide-react';
-import { OccasionConfig } from '../types/occasion';
+import type { VvntxOccasionConfig } from '../config';
 
 interface EnvelopeIntroProps {
-  occasion: OccasionConfig;
+  occasion: VvntxOccasionConfig;
   recipientDisplay: string;
   onOpen: () => void;
 }
@@ -42,15 +42,22 @@ export const EnvelopeIntro: React.FC<EnvelopeIntroProps> = ({
       >
         {/* Top Ceremonial Heading */}
         <div className="mb-6 text-center">
-          <p className="font-serif-classic text-xs font-semibold tracking-[0.22em] text-[#E5C158] uppercase sm:text-[13px]">
+          <p className="font-serif-classic text-[11px] font-semibold tracking-[0.14em] text-[#E5C158] uppercase text-balance sm:text-[13px] sm:tracking-[0.22em]">
             {occasion.dateLabel}
           </p>
-          <h1 className="font-serif-classic mt-2.5 text-3xl font-bold tracking-wide text-[#F0D57A] sm:text-4xl">
+          <h1 className="font-serif-classic mt-2.5 text-3xl font-bold tracking-wide text-[#F0D57A] text-balance sm:text-4xl">
             {occasion.envelopeTitle}
           </h1>
-          <p className="mt-1.5 text-xs tracking-[0.14em] text-[#CFE0F5] uppercase sm:text-sm">
-            {occasion.organization}
-          </p>
+          <div className="mt-1.5 space-y-0.5 text-center">
+            <p className="font-serif-classic text-xs font-semibold tracking-[0.14em] text-[#CFE0F5] uppercase whitespace-nowrap sm:text-sm">
+              {occasion.organization}
+            </p>
+            {occasion.organizationSubline && (
+              <p className="text-[11px] tracking-[0.14em] text-[#CFE0F5]/80 uppercase">
+                {occasion.organizationSubline}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Interactive Formal Silk Envelope Container */}
@@ -89,17 +96,35 @@ export const EnvelopeIntro: React.FC<EnvelopeIntroProps> = ({
               <p className="font-serif-classic text-xs font-semibold tracking-[0.22em] text-[#E5C158] uppercase">
                 Trân trọng kính gửi
               </p>
-              <p className="font-serif-classic mt-2 text-2xl leading-snug font-bold text-white sm:text-[28px]">
-                {recipientDisplay}
+              <p className="font-serif-classic mt-2 text-xl leading-snug font-bold text-white text-balance sm:text-[28px]">
+                {recipientDisplay.split('\n').map((line, idx) => (
+                  <span
+                    key={idx}
+                    className={
+                      line.includes('CLB Vovinam Thanh Xuân')
+                        ? 'block whitespace-nowrap'
+                        : 'block'
+                    }
+                  >
+                    {line}
+                  </span>
+                ))}
               </p>
               <div className="my-4 flex items-center justify-center gap-3" aria-hidden="true">
                 <span className="h-px w-12 bg-[#D4AF37]/50" />
                 <span className="h-1.5 w-1.5 bg-[#E5C158]" />
                 <span className="h-px w-12 bg-[#D4AF37]/50" />
               </div>
-              <p className="font-serif-classic text-sm italic text-[#CFE0F5] sm:text-[15px]">
+              <p className="font-serif-classic text-sm leading-relaxed italic text-[#CFE0F5] text-balance sm:text-[15px]">
                 “{occasion.motto}”
               </p>
+              {occasion.mottoSubline && (
+                <p className="font-serif-classic mt-2 flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.18em] text-[#E5C158]/90 uppercase whitespace-nowrap sm:text-xs">
+                  <span aria-hidden="true" className="text-[#D4AF37]/75">•</span>
+                  <span>{occasion.mottoSubline}</span>
+                  <span aria-hidden="true" className="text-[#D4AF37]/75">•</span>
+                </p>
+              )}
             </div>
 
             {/* Dignified Upright Seal Button */}

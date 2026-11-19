@@ -1,0 +1,60 @@
+{
+  "cards": [
+    {
+      "accessSlug": "vvntx2011",
+      "status": "active",
+      "validFrom": "2026-11-15T00:00:00+07:00",
+      "validTo": "2026-11-25T23:59:59+07:00",
+      "meta": {
+        "title": "Tri Ân 20/11 — Võ sư Lữ Thanh Xuân & CLB Vovinam Thanh Xuân",
+        "description": "Kính gửi Võ sư Lữ Thanh Xuân và các anh em giáo chức CLB Vovinam Thanh Xuân. Bàn tay thép đặt lên trái tim từ ái — Một đời rèn võ, một đời trồng người.",
+        "ogImage": "/images/vovinam-thanh-xuan-20.jpg",
+        "themeColor": "#071A3C"
+      },
+      "backendOptions": {
+        "wishes": {
+          "enabled": true,
+          "collectionKey": "20-11-vovinam-thanh-xuan",
+          "defaultRole": "Thành viên CLB Vovinam Thanh Xuân",
+          "maxMessageLength": 600
+        }
+      }
+    },
+    {
+      "accessSlug": "tet2027",
+      "status": "coming-soon",
+      "validFrom": "2027-02-01T00:00:00+07:00",
+      "validTo": "2027-02-28T23:59:59+07:00",
+      "meta": {
+        "title": "Chúc Mừng Năm Mới — Tết 2027",
+        "description": "Thiệp chúc mừng Tết Nguyên Đán 2027.",
+        "ogImage": "",
+        "themeColor": "#7F1D1D"
+      }
+    },
+    {
+      "accessSlug": "ngay83",
+      "status": "coming-soon",
+      "validFrom": "2027-03-01T00:00:00+07:00",
+      "validTo": "2027-03-15T23:59:59+07:00",
+      "meta": {
+        "title": "Chúc Mừng Ngày Quốc Tế Phụ Nữ 8/3",
+        "description": "Thiệp chúc mừng Ngày Quốc tế Phụ nữ 8/3.",
+        "ogImage": "",
+        "themeColor": "#9D174D"
+      }
+    },
+    {
+      "accessSlug": "vvntx20nam",
+      "status": "coming-soon",
+      "validFrom": "2027-04-01T00:00:00+07:00",
+      "validTo": "2027-04-30T23:59:59+07:00",
+      "meta": {
+        "title": "Kỷ Niệm 20 Năm CLB Vovinam Thanh Xuân",
+        "description": "Thiệp chúc mừng kỷ niệm 20 năm thành lập CLB Vovinam Thanh Xuân.",
+        "ogImage": "/images/vovinam-thanh-xuan-20.jpg",
+        "themeColor": "#071A3C"
+      }
+    }
+  ]
+}

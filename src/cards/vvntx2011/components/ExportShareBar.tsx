@@ -1,34 +1,40 @@
-﻿import React, { useState, useEffect } from 'react';
-import QRCode from 'qrcode';
+﻿import React, { useEffect, useState } from 'react';
 import {
-  Download,
-  Share2,
-  QrCode,
-  PenLine,
   Check,
-  X,
-  RotateCcw,
+  Download,
   Loader2,
+  PenLine,
+  QrCode,
+  RotateCcw,
+  Share2,
+  X,
 } from 'lucide-react';
-import { CardPersonalization, OccasionConfig } from '../types/occasion';
-import { buildShareUrl } from '../utils/urlParams';
-import { exportElementToPng } from '../utils/exportImage';
+import type { CardPersonalization } from '../../../platform/types';
+import { exportElementToPng } from '../../../platform/utils/exportImage';
+import type { VvntxOccasionConfig } from '../config';
 
 interface ExportShareBarProps {
-  occasion: OccasionConfig;
+  occasion: VvntxOccasionConfig;
   personalization: CardPersonalization;
-  onChangePersonalization: (next: CardPersonalization) => void;
+  copied: boolean;
+  onSyncPersonalization: (next: CardPersonalization) => void;
+  onResetPersonalization: () => void;
+  onCopyShareUrl: () => Promise<void>;
+  onGenerateQrDataUrl: (darkColor?: string, lightColor?: string) => Promise<string>;
   cardRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const ExportShareBar: React.FC<ExportShareBarProps> = ({
   occasion,
   personalization,
-  onChangePersonalization,
+  copied,
+  onSyncPersonalization,
+  onResetPersonalization,
+  onCopyShareUrl,
+  onGenerateQrDataUrl,
   cardRef,
 }) => {
   const [exporting, setExporting] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [showCustomize, setShowCustomize] = useState(false);
   const [showQr, setShowQr] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
@@ -36,9 +42,6 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
   const [draftTo, setDraftTo] = useState(personalization.customTo);
   const [draftFrom, setDraftFrom] = useState(personalization.customFrom);
   const [draftMsg, setDraftMsg] = useState(personalization.customMessage);
-
-  const defaultPresetId = occasion.presets[0]?.id ?? 'all';
-  const shareUrl = buildShareUrl(occasion.accessSlug, personalization, defaultPresetId);
 
   useEffect(() => {
     setDraftTo(personalization.customTo);
@@ -48,35 +51,32 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
 
   useEffect(() => {
     if (!showQr) return;
-    QRCode.toDataURL(shareUrl, {
-      width: 320,
-      margin: 2,
-      color: { dark: '#071A3C', light: '#FFFFFF' },
-    })
-      .then(setQrDataUrl)
-      .catch(() => setQrDataUrl(''));
-  }, [showQr, shareUrl]);
+    let cancelled = false;
+    onGenerateQrDataUrl('#071A3C', '#FFFFFF')
+      .then((url) => {
+        if (!cancelled) setQrDataUrl(url);
+      })
+      .catch(() => {
+        if (!cancelled) setQrDataUrl('');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [showQr, onGenerateQrDataUrl]);
 
   const handleDownloadPng = async () => {
     if (!cardRef.current || exporting) return;
     try {
       setExporting(true);
-      await exportElementToPng(cardRef.current, `thiep-${occasion.accessSlug}`);
+      await exportElementToPng(cardRef.current, `thiep-${occasion.accessSlug}`, {
+        backgroundColor: '#071A3C',
+        pixelRatio: 2,
+      });
     } catch (err) {
       console.error('Export PNG failed:', err);
       alert('Không thể xuất ảnh tự động trên trình duyệt này. Bạn có thể chụp màn hình trực tiếp nhé!');
     } finally {
       setExporting(false);
-    }
-  };
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2400);
-    } catch {
-      window.prompt('Sao chép đường dẫn thiệp để gửi Zalo/Facebook:', shareUrl);
     }
   };
 
@@ -88,22 +88,12 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
       customFrom: draftFrom.trim(),
       customMessage: draftMsg.trim(),
     };
-    onChangePersonalization(next);
-    const nextUrl = buildShareUrl(occasion.accessSlug, next, defaultPresetId);
-    window.history.replaceState({}, '', nextUrl);
+    onSyncPersonalization(next);
     setShowCustomize(false);
   };
 
   const handleResetCustomize = () => {
-    const next: CardPersonalization = {
-      presetId: defaultPresetId,
-      customTo: '',
-      customFrom: '',
-      customMessage: '',
-    };
-    onChangePersonalization(next);
-    const nextUrl = buildShareUrl(occasion.accessSlug, next, defaultPresetId);
-    window.history.replaceState({}, '', nextUrl);
+    onResetPersonalization();
     setShowCustomize(false);
   };
 
@@ -136,7 +126,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
 
         <button
           type="button"
-          onClick={handleCopyLink}
+          onClick={onCopyShareUrl}
           className="inline-flex items-center gap-2 rounded-xl border border-blue-400/35 bg-[#081F4A]/90 px-4 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-300/70 hover:bg-[#0B2A5B]"
         >
           {copied ? (

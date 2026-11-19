@@ -43,14 +43,14 @@ export const BambooAccent: React.FC<{ className?: string }> = ({ className = '' 
 
 export const TonSuStamp: React.FC = () => (
   <div
-    className="inline-flex h-[68px] w-[68px] shrink-0 items-center justify-center border-2 border-[#9B1C1C] bg-[#9B1C1C]/[0.04] p-[3px] select-none"
+    className="inline-flex h-[78px] w-[78px] shrink-0 items-center justify-center border-2 border-[#9B1C1C] bg-[#9B1C1C]/[0.04] p-[3px] select-none"
     title="Tôn Sư Trọng Đạo"
   >
-    <div className="flex h-full w-full flex-col items-center justify-center border border-[#9B1C1C]/65 px-1 text-center text-[#9B1C1C]">
-      <span className="font-serif-classic w-full border-b border-[#9B1C1C]/45 pb-0.5 text-[10px] leading-tight font-bold tracking-[0.08em] uppercase">
+    <div className="flex h-full w-full flex-col items-center justify-center border border-[#9B1C1C]/65 px-0.5 text-center text-[#9B1C1C]">
+      <span className="font-serif-classic w-full border-b border-[#9B1C1C]/45 pb-0.5 text-[9.5px] leading-tight font-bold tracking-[0.04em] uppercase whitespace-nowrap">
         Tôn Sư
       </span>
-      <span className="font-serif-classic pt-0.5 text-[9.5px] leading-tight font-bold tracking-[0.06em] uppercase">
+      <span className="font-serif-classic pt-0.5 text-[9.5px] leading-tight font-bold tracking-[0.04em] uppercase whitespace-nowrap">
         Trọng Đạo
       </span>
     </div>
