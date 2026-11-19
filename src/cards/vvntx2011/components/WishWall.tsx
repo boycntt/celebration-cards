@@ -1,165 +1,44 @@
-﻿import React, { useState, useEffect } from 'react';
-import { CheckCircle2, Loader2, MessageSquareHeart, Send, Trash2, AlertCircle } from 'lucide-react';
-import { WishItem } from '../types/occasion';
+﻿import React, { useState } from 'react';
+import {
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+  MessageSquareHeart,
+  Send,
+  Trash2,
+} from 'lucide-react';
+import { useWishes } from '../../../platform/hooks/useWishes';
+import type { WishItem } from '../../../platform/types';
 
 interface WishWallProps {
-  occasionSlug: string;
+  accessSlug: string;
   defaultWishes: WishItem[];
+  defaultRole: string;
 }
 
-interface FeedbackState {
-  type: 'success' | 'info' | 'error';
-  text: string;
-}
-
-export const WishWall: React.FC<WishWallProps> = ({ occasionSlug, defaultWishes }) => {
-  const storageKey = `celebration_cards_wishes_${occasionSlug}`;
-  const [remoteWishes, setRemoteWishes] = useState<WishItem[]>([]);
-  const [localWishes, setLocalWishes] = useState<WishItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
+export const WishWall: React.FC<WishWallProps> = ({
+  accessSlug,
+  defaultWishes,
+  defaultRole,
+}) => {
+  const { wishes, loading, submitting, feedback, submitWish, deleteLocalWish } = useWishes({
+    accessSlug,
+    defaultWishes,
+    defaultRole,
+  });
 
   const [author, setAuthor] = useState('');
-  const [role, setRole] = useState('Môn sinh CLB Vovinam Thanh Xuân');
+  const [role, setRole] = useState(defaultRole);
   const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(storageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved) as WishItem[];
-        if (Array.isArray(parsed)) setLocalWishes(parsed);
-      } else {
-        setLocalWishes([]);
-      }
-    } catch {
-      setLocalWishes([]);
-    }
-  }, [storageKey]);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-
-    fetch(`/api/wishes/${encodeURIComponent(occasionSlug)}`)
-      .then(async (res) => {
-        if (!res.ok) return null;
-        const data = (await res.json()) as { wishes?: WishItem[] };
-        return Array.isArray(data.wishes) ? data.wishes : null;
-      })
-      .then((wishes) => {
-        if (!cancelled && wishes) {
-          setRemoteWishes(wishes);
-        }
-      })
-      .catch(() => {
-        // Offline / pure static fallback: keep default & local wishes
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [occasionSlug]);
-
-  const saveLocalFallback = (authorVal: string, roleVal: string, messageVal: string) => {
-    const newWish: WishItem = {
-      id: `local-${Date.now()}`,
-      author: authorVal,
-      role: roleVal || 'Thành viên CLB Vovinam Thanh Xuân',
-      message: messageVal,
-      createdAt: new Date().toLocaleDateString('vi-VN'),
-    };
-
-    const next = [newWish, ...localWishes];
-    setLocalWishes(next);
-    try {
-      window.localStorage.setItem(storageKey, JSON.stringify(next));
-    } catch {
-      // Ignore storage quota errors
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedAuthor = author.trim();
-    const trimmedRole = role.trim();
-    const trimmedMessage = message.trim();
-    if (!trimmedAuthor || !trimmedMessage || submitting) return;
-
-    setSubmitting(true);
-    setFeedback(null);
-
-    try {
-      const response = await fetch(`/api/wishes/${encodeURIComponent(occasionSlug)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          author: trimmedAuthor,
-          role: trimmedRole,
-          message: trimmedMessage,
-        }),
-      });
-
-      if (response.ok) {
-        const data = (await response.json()) as { wish?: WishItem };
-        if (data.wish) {
-          setRemoteWishes((prev) => [data.wish as WishItem, ...prev]);
-        }
-        setAuthor('');
-        setMessage('');
-        setFeedback({
-          type: 'success',
-          text: 'Đã lưu lời chúc vào Sổ Lưu Bút chung của CLB.',
-        });
-        return;
-      }
-
-      if (response.status === 400 || response.status === 429) {
-        const errData = (await response.json().catch(() => ({}))) as { error?: string };
-        setFeedback({
-          type: 'error',
-          text: errData.error || 'Không thể gửi lời chúc. Vui lòng kiểm tra lại thông tin.',
-        });
-        return;
-      }
-
-      // 503 / server unavailable -> fallback to localStorage
-      saveLocalFallback(trimmedAuthor, trimmedRole, trimmedMessage);
+    const ok = await submitWish({ author, role, message });
+    if (ok) {
       setAuthor('');
       setMessage('');
-      setFeedback({
-        type: 'info',
-        text: 'Đã lưu lời chúc tạm thời trên trình duyệt này (chế độ ngoại tuyến).',
-      });
-    } catch {
-      // Network unreachable / pure static mode -> fallback to localStorage
-      saveLocalFallback(trimmedAuthor, trimmedRole, trimmedMessage);
-      setAuthor('');
-      setMessage('');
-      setFeedback({
-        type: 'info',
-        text: 'Đã lưu lời chúc trên trình duyệt này (chế độ ngoại tuyến).',
-      });
-    } finally {
-      setSubmitting(false);
     }
   };
-
-  const handleDeleteLocal = (id: string) => {
-    const next = localWishes.filter((w) => w.id !== id);
-    setLocalWishes(next);
-    try {
-      window.localStorage.setItem(storageKey, JSON.stringify(next));
-    } catch {
-      // Ignore
-    }
-  };
-
-  const allWishes = [...localWishes, ...remoteWishes, ...defaultWishes];
 
   return (
     <section className="mx-auto mt-10 w-full max-w-2xl px-2">
@@ -252,7 +131,7 @@ export const WishWall: React.FC<WishWallProps> = ({ occasionSlug, defaultWishes 
 
         {/* Wishes List */}
         <div className="mt-6 space-y-3">
-          {allWishes.map((wish) => {
+          {wishes.map((wish) => {
             const isLocal = wish.id.startsWith('local-');
             return (
               <div
@@ -273,7 +152,7 @@ export const WishWall: React.FC<WishWallProps> = ({ occasionSlug, defaultWishes 
                     {isLocal && (
                       <button
                         type="button"
-                        onClick={() => handleDeleteLocal(wish.id)}
+                        onClick={() => deleteLocalWish(wish.id)}
                         className="text-slate-400 hover:text-red-400"
                         title="Xóa lời chúc này"
                       >

@@ -35,8 +35,12 @@ jobs:
       - name: Typecheck & Vite production build
         run: npm run build
 
-      - name: Syntax check backend server
-        run: node --check server/index.mjs
+      - name: Syntax check backend server & validate manifest
+        run: |
+          for f in $(find server -name '*.mjs'); do
+            node --check "$f"
+          done
+          node -e "JSON.parse(require('fs').readFileSync('shared/cards-manifest.json','utf8'))"
 
       - name: Verify critical build outputs
         run: |

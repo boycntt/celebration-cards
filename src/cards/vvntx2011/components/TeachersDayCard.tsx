@@ -1,9 +1,10 @@
 ﻿import React from 'react';
-import { CardPersonalization, OccasionConfig, RecipientPreset } from '../../core/types/occasion';
+import type { CardPersonalization } from '../../../platform/types';
+import type { RecipientPreset, VvntxOccasionConfig } from '../config';
 import { BambooAccent, GoldDivider, TonSuStamp } from './VovinamDecorations';
 
 interface TeachersDayCardProps {
-  occasion: OccasionConfig;
+  occasion: VvntxOccasionConfig;
   preset: RecipientPreset;
   personalization: CardPersonalization;
   cardRef: React.RefObject<HTMLDivElement | null>;
@@ -32,24 +33,31 @@ export const TeachersDayCard: React.FC<TeachersDayCardProps> = ({
 
         {/* Top Header Banner */}
         <div className="relative px-4 pt-5 pb-5 text-center sm:px-6 sm:pt-6">
-          <p className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-[#E5C158] uppercase sm:text-[13px]">
+          <p className="font-serif-classic text-[11px] font-semibold tracking-[0.14em] text-[#E5C158] uppercase text-balance sm:text-[13px] sm:tracking-[0.2em]">
             {occasion.dateLabel}
           </p>
 
           <div className="mt-3 flex items-center justify-center gap-4">
             <span className="h-px w-12 bg-[#D4AF37]/65 sm:w-16" />
-            <span className="font-serif-classic text-3xl font-bold tracking-[0.16em] text-[#F0D57A] sm:text-4xl">
+            <span className="font-serif-classic text-3xl font-bold tracking-[0.16em] text-[#F0D57A] whitespace-nowrap sm:text-4xl">
               20 • 11
             </span>
             <span className="h-px w-12 bg-[#D4AF37]/65 sm:w-16" />
           </div>
 
-          <h1 className="font-serif-classic mt-3 text-2xl leading-snug font-bold tracking-wide text-white sm:text-[28px]">
+          <h1 className="font-serif-classic mt-3 text-xl leading-snug font-bold tracking-wide text-white text-balance sm:text-[28px]">
             {preset.headline}
           </h1>
-          <p className="mt-1.5 text-xs font-medium tracking-[0.16em] text-[#CFE0F5] uppercase">
-            {occasion.organization}
-          </p>
+          <div className="mt-2 space-y-0.5 text-center">
+            <p className="font-serif-classic text-xs font-semibold tracking-[0.16em] text-[#CFE0F5] uppercase whitespace-nowrap sm:text-[13px]">
+              {occasion.organization}
+            </p>
+            {occasion.organizationSubline && (
+              <p className="text-[11px] font-medium tracking-[0.16em] text-[#CFE0F5]/80 uppercase">
+                {occasion.organizationSubline}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Hero Club Photo Frame — Uncropped 1:1 Responsive Fit */}
@@ -78,11 +86,26 @@ export const TeachersDayCard: React.FC<TeachersDayCardProps> = ({
             <p className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-[#0B2A5B]/80 uppercase sm:text-[13px]">
               {preset.salutation}
             </p>
-            <h2 className="font-serif-classic mt-2 text-2xl leading-snug font-bold text-[#0B2A5B] sm:text-[28px]">
-              {recipientTitle}
+            <h2 className="font-serif-classic mt-2 text-xl leading-snug font-bold text-[#0B2A5B] text-balance sm:text-[28px]">
+              {recipientTitle.split('\n').map((line, idx) => (
+                <span
+                  key={idx}
+                  className={
+                    line.includes('CLB Vovinam Thanh Xuân')
+                      ? 'block whitespace-nowrap'
+                      : 'block'
+                  }
+                >
+                  {line}
+                </span>
+              ))}
             </h2>
-            <p className="font-serif-classic mt-2.5 text-base font-semibold italic text-[#8A6218] sm:text-[17px]">
-              {preset.quote}
+            <p className="font-serif-classic mt-2.5 text-base leading-relaxed font-semibold italic text-[#8A6218] sm:text-[17px]">
+              {preset.quote.split('\n').map((line, idx) => (
+                <span key={idx} className="block text-balance">
+                  {line}
+                </span>
+              ))}
             </p>
           </div>
 
@@ -103,39 +126,55 @@ export const TeachersDayCard: React.FC<TeachersDayCardProps> = ({
 
           {/* Footer Signature & Straight Vermilion Seal */}
           <div className="mt-8 flex flex-col items-center justify-between gap-6 border-t border-[#B8860B]/30 pt-6 sm:flex-row sm:items-end">
-            <div className="flex items-center gap-3.5">
+            <div className="flex shrink-0 items-center gap-3.5">
               <TonSuStamp />
               <div className="text-left">
-                <p className="font-serif-classic text-xs font-bold tracking-[0.12em] text-[#0B2A5B] uppercase">
+                <p className="font-serif-classic text-[11.5px] font-bold tracking-[0.1em] text-[#0B2A5B] uppercase whitespace-nowrap sm:text-xs">
                   Tinh thần Việt Võ Đạo
                 </p>
-                <p className="font-serif-classic mt-0.5 text-sm italic text-[#475569]">
+                <p className="font-serif-classic mt-0.5 text-sm italic text-[#475569] whitespace-nowrap">
                   Cương Nhu Phối Triển
                 </p>
               </div>
             </div>
 
             <div className="text-center sm:text-right">
-              <p className="font-serif-classic text-sm italic text-[#475569]">
-                Ngày 20 tháng 11 năm 2026
+              <p className="font-serif-classic text-sm italic text-[#475569] whitespace-nowrap">
+                Hà Nội, 20 tháng 11 năm 2026
               </p>
               <p className="font-serif-classic mt-1 text-sm font-semibold italic text-[#334155]">
                 {preset.closing}
               </p>
-              <p className="font-serif-classic mt-2 text-lg font-bold text-[#0B2A5B] sm:text-[19px]">
-                {signature}
+              <p className="font-serif-classic mt-2 text-base leading-snug font-bold text-[#0B2A5B] sm:text-[19px]">
+                {signature.split('\n').map((line, idx) => (
+                  <span
+                    key={idx}
+                    className={
+                      line.includes('CLB Vovinam Thanh Xuân')
+                        ? 'block whitespace-nowrap'
+                        : 'block'
+                    }
+                  >
+                    {line}
+                  </span>
+                ))}
               </p>
             </div>
           </div>
         </div>
 
         {/* Bottom Martial Ribbon */}
-        <div className="mt-3.5 flex items-center justify-center gap-2.5 pb-1 text-center text-[11px] tracking-[0.16em] text-[#E5C158]/90 uppercase">
-          <span className="h-px w-6 bg-[#D4AF37]/50" />
-          <span className="font-serif-classic font-semibold">
-            CLB Vovinam Thanh Xuân • 20/11/2026
+        <div className="mt-3.5 flex flex-col items-center justify-center gap-1 pb-1 text-center text-[11px] tracking-[0.16em] text-[#E5C158]/90 uppercase">
+          <div className="flex items-center justify-center gap-2.5">
+            <span className="h-px w-6 bg-[#D4AF37]/50" />
+            <span className="font-serif-classic font-semibold whitespace-nowrap">
+              {occasion.organization}
+            </span>
+            <span className="h-px w-6 bg-[#D4AF37]/50" />
+          </div>
+          <span className="font-serif-classic text-[10.5px] font-medium tracking-[0.2em] text-[#E5C158]/75 whitespace-nowrap">
+            20/11/2026
           </span>
-          <span className="h-px w-6 bg-[#D4AF37]/50" />
         </div>
       </div>
     </div>
