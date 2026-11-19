@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 export const BambooAccent: React.FC<{ className?: string }> = ({ className = '' }) => (
   <svg
@@ -43,22 +43,24 @@ export const BambooAccent: React.FC<{ className?: string }> = ({ className = '' 
 
 export const TonSuStamp: React.FC = () => (
   <div
-    className="inline-flex h-16 w-16 rotate-[-8deg] flex-col items-center justify-center rounded-lg border-2 border-red-700/80 bg-red-700/5 px-1 text-center text-red-800 shadow-inner select-none"
+    className="inline-flex h-[68px] w-[68px] shrink-0 items-center justify-center border-2 border-[#9B1C1C] bg-[#9B1C1C]/[0.04] p-[3px] select-none"
     title="Tôn Sư Trọng Đạo"
   >
-    <span className="border-b border-red-700/40 pb-0.5 text-[9px] font-bold uppercase tracking-widest">
-      Tôn Sư
-    </span>
-    <span className="pt-0.5 text-[9px] font-bold uppercase tracking-widest">
-      Trọng Đạo
-    </span>
+    <div className="flex h-full w-full flex-col items-center justify-center border border-[#9B1C1C]/65 px-1 text-center text-[#9B1C1C]">
+      <span className="font-serif-classic w-full border-b border-[#9B1C1C]/45 pb-0.5 text-[10px] leading-tight font-bold tracking-[0.08em] uppercase">
+        Tôn Sư
+      </span>
+      <span className="font-serif-classic pt-0.5 text-[9.5px] leading-tight font-bold tracking-[0.06em] uppercase">
+        Trọng Đạo
+      </span>
+    </div>
   </div>
 );
 
 export const GoldDivider: React.FC = () => (
   <div className="my-5 flex items-center justify-center gap-3" aria-hidden="true">
-    <span className="h-px w-16 bg-gradient-to-r from-transparent to-amber-500/70 sm:w-24" />
-    <span className="h-2 w-2 rotate-45 border border-amber-500 bg-amber-300/60" />
-    <span className="h-px w-16 bg-gradient-to-l from-transparent to-amber-500/70 sm:w-24" />
+    <span className="h-px w-16 bg-[#B8860B]/55 sm:w-24" />
+    <span className="h-1.5 w-1.5 bg-[#B8860B]" />
+    <span className="h-px w-16 bg-[#B8860B]/55 sm:w-24" />
   </div>
 );

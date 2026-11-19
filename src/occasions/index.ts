@@ -1,9 +1,12 @@
-import { OccasionConfig } from '../core/types/occasion';
+﻿import { OccasionConfig } from '../core/types/occasion';
 import { teachersDay2011Config } from './teachers-day-20-11/config';
 
 const upcomingOccasions: OccasionConfig[] = [
   {
     slug: 'tet-nguyen-dan',
+    accessSlug: 'vovinamthanhxuantet2027',
+    validFrom: '2027-02-01T00:00:00+07:00',
+    validTo: '2027-02-20T23:59:59+07:00',
     title: 'Chúc Mừng Năm Mới — Tết Nguyên Đán',
     subtitle: 'Thiệp Xuân An Khang & Tinh thần Thượng Võ gửi đại gia đình CLB',
     dateBadge: 'Tết Âm Lịch',
@@ -21,6 +24,9 @@ const upcomingOccasions: OccasionConfig[] = [
   },
   {
     slug: 'quoc-te-phu-nu-8-3',
+    accessSlug: 'vovinamthanhxuan08032027',
+    validFrom: '2027-03-04T00:00:00+07:00',
+    validTo: '2027-03-12T23:59:59+07:00',
     title: 'Quốc Tế Phụ Nữ 8/3',
     subtitle: 'Tôn vinh các nữ môn sinh & nữ huấn luyện viên Vovinam Thanh Xuân',
     dateBadge: '08 / 03',
@@ -38,6 +44,9 @@ const upcomingOccasions: OccasionConfig[] = [
   },
   {
     slug: 'phu-nu-viet-nam-20-10',
+    accessSlug: 'vovinamthanhxuan20102027',
+    validFrom: '2027-10-16T00:00:00+07:00',
+    validTo: '2027-10-25T23:59:59+07:00',
     title: 'Ngày Phụ Nữ Việt Nam 20/10',
     subtitle: 'Gửi lời chúc yêu thương tới các bông hoa áo xanh lam CLB',
     dateBadge: '20 / 10',
@@ -55,6 +64,9 @@ const upcomingOccasions: OccasionConfig[] = [
   },
   {
     slug: 'ky-niem-clb-vovinam-thanh-xuan',
+    accessSlug: 'vovinamthanhxuankyniem2027',
+    validFrom: '2027-04-01T00:00:00+07:00',
+    validTo: '2027-04-30T23:59:59+07:00',
     title: 'Kỷ Niệm Thành Lập CLB Vovinam Thanh Xuân',
     subtitle: 'Khung trời kỷ niệm — Hành trình gắn kết các thế hệ môn sinh từ 2006',
     dateBadge: 'Tháng 4',
@@ -77,11 +89,36 @@ export const OCCASIONS_REGISTRY: OccasionConfig[] = [
   ...upcomingOccasions,
 ];
 
-export const DEFAULT_OCCASION_SLUG = teachersDay2011Config.slug;
+export function isOccasionWithinValidWindow(
+  occasion: OccasionConfig,
+  now: Date = new Date()
+): boolean {
+  const fromMs = Date.parse(occasion.validFrom);
+  const toMs = Date.parse(occasion.validTo);
+  const nowMs = now.getTime();
 
-export function getOccasionBySlug(slug: string): OccasionConfig {
-  return (
-    OCCASIONS_REGISTRY.find((item) => item.slug === slug && item.status === 'active') ||
-    teachersDay2011Config
+  if (Number.isNaN(fromMs) || Number.isNaN(toMs)) {
+    return false;
+  }
+
+  return nowMs >= fromMs && nowMs <= toMs;
+}
+
+export function resolveValidOccasion(
+  accessSlug: string | null,
+  now: Date = new Date()
+): OccasionConfig | null {
+  if (!accessSlug) {
+    return null;
+  }
+
+  const normalized = accessSlug.trim().toLowerCase();
+  const matched = OCCASIONS_REGISTRY.find(
+    (item) =>
+      item.status === 'active' &&
+      item.accessSlug.toLowerCase() === normalized &&
+      isOccasionWithinValidWindow(item, now)
   );
+
+  return matched ?? null;
 }

@@ -1,24 +1,17 @@
 services:
   - type: web
     name: vovinam-thanh-xuan-celebration-cards
-    runtime: static
+    runtime: node
+    plan: free
     branch: main
     # Set autoDeploy: false if you prefer strictly CI-gated deploys via GitHub Secret RENDER_DEPLOY_HOOK_URL
     autoDeploy: true
     buildCommand: npm ci && npm run build
-    staticPublishPath: ./dist
+    startCommand: npm start
+    healthCheckPath: /api/health
     pullRequestPreviewsEnabled: true
-    headers:
-      - path: /assets/*
-        name: Cache-Control
-        value: public, max-age=31536000, immutable
-      - path: /images/*
-        name: Cache-Control
-        value: public, max-age=604800
-      - path: /index.html
-        name: Cache-Control
-        value: no-cache
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false

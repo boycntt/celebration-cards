@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import {
   Download,
   Share2,
   QrCode,
-  Sparkles,
+  PenLine,
   Check,
   X,
   RotateCcw,
@@ -38,7 +38,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
   const [draftMsg, setDraftMsg] = useState(personalization.customMessage);
 
   const defaultPresetId = occasion.presets[0]?.id ?? 'all';
-  const shareUrl = buildShareUrl(occasion.slug, personalization, defaultPresetId);
+  const shareUrl = buildShareUrl(occasion.accessSlug, personalization, defaultPresetId);
 
   useEffect(() => {
     setDraftTo(personalization.customTo);
@@ -61,7 +61,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
     if (!cardRef.current || exporting) return;
     try {
       setExporting(true);
-      await exportElementToPng(cardRef.current, `thiep-${occasion.slug}`);
+      await exportElementToPng(cardRef.current, `thiep-${occasion.accessSlug}`);
     } catch (err) {
       console.error('Export PNG failed:', err);
       alert('Không thể xuất ảnh tự động trên trình duyệt này. Bạn có thể chụp màn hình trực tiếp nhé!');
@@ -89,7 +89,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
       customMessage: draftMsg.trim(),
     };
     onChangePersonalization(next);
-    const nextUrl = buildShareUrl(occasion.slug, next, defaultPresetId);
+    const nextUrl = buildShareUrl(occasion.accessSlug, next, defaultPresetId);
     window.history.replaceState({}, '', nextUrl);
     setShowCustomize(false);
   };
@@ -102,7 +102,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
       customMessage: '',
     };
     onChangePersonalization(next);
-    const nextUrl = buildShareUrl(occasion.slug, next, defaultPresetId);
+    const nextUrl = buildShareUrl(occasion.accessSlug, next, defaultPresetId);
     window.history.replaceState({}, '', nextUrl);
     setShowCustomize(false);
   };
@@ -115,7 +115,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
           type="button"
           onClick={handleDownloadPng}
           disabled={exporting}
-          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-xl bg-[#E5C158] px-4 py-2.5 text-sm font-semibold text-[#061533] shadow-md transition hover:bg-[#F0D57A] active:scale-[0.98] disabled:opacity-60"
         >
           {exporting ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -128,16 +128,16 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
         <button
           type="button"
           onClick={() => setShowCustomize(true)}
-          className="inline-flex items-center gap-2 rounded-xl border border-amber-300/35 bg-blue-950/75 px-4 py-2.5 text-sm font-medium text-amber-100 backdrop-blur-md transition hover:border-amber-300/70 hover:bg-blue-900/80"
+          className="inline-flex items-center gap-2 rounded-xl border border-[#D4AF37]/45 bg-[#081F4A]/90 px-4 py-2.5 text-sm font-medium text-[#F5E6B8] transition hover:border-[#E5C158] hover:bg-[#0B2A5B]"
         >
-          <Sparkles className="h-4 w-4 text-amber-300" />
+          <PenLine className="h-4 w-4 text-[#E5C158]" />
           Cá nhân hóa thiệp
         </button>
 
         <button
           type="button"
           onClick={handleCopyLink}
-          className="inline-flex items-center gap-2 rounded-xl border border-blue-400/30 bg-blue-950/75 px-4 py-2.5 text-sm font-medium text-blue-100 backdrop-blur-md transition hover:border-blue-300/60 hover:bg-blue-900/80"
+          className="inline-flex items-center gap-2 rounded-xl border border-blue-400/35 bg-[#081F4A]/90 px-4 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-300/70 hover:bg-[#0B2A5B]"
         >
           {copied ? (
             <>
@@ -155,10 +155,10 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
         <button
           type="button"
           onClick={() => setShowQr(true)}
-          className="inline-flex items-center gap-2 rounded-xl border border-blue-400/30 bg-blue-950/75 px-3.5 py-2.5 text-sm font-medium text-blue-100 backdrop-blur-md transition hover:border-blue-300/60 hover:bg-blue-900/80"
+          className="inline-flex items-center gap-2 rounded-xl border border-blue-400/35 bg-[#081F4A]/90 px-3.5 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-300/70 hover:bg-[#0B2A5B]"
           title="Hiển thị mã QR"
         >
-          <QrCode className="h-4 w-4 text-amber-300" />
+          <QrCode className="h-4 w-4 text-[#E5C158]" />
           Mã QR
         </button>
       </div>
@@ -166,9 +166,9 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
       {/* Customize Modal */}
       {showCustomize && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-amber-300/30 bg-[#081c42] p-6 text-slate-100 shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl border border-[#D4AF37]/45 bg-[#081c42] p-6 text-slate-100 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-serif-display text-2xl font-bold text-amber-200">
+              <h3 className="font-serif-classic text-2xl font-bold text-[#F0D57A]">
                 Cá nhân hóa thiệp 20/11
               </h3>
               <button
@@ -185,7 +185,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
 
             <form onSubmit={handleSaveCustomize} className="mt-5 space-y-4">
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-amber-200/90">
+                <label className="block text-xs font-medium tracking-wider text-[#E5C158] uppercase">
                   Kính gửi (để trống sẽ dùng mặc định)
                 </label>
                 <input
@@ -193,12 +193,12 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
                   value={draftTo}
                   onChange={(e) => setDraftTo(e.target.value)}
                   placeholder="VD: Võ sư Lữ Thanh Xuân"
-                  className="mt-1.5 w-full rounded-xl border border-blue-400/30 bg-slate-950/50 px-3.5 py-2.5 text-sm text-white placeholder-slate-400 focus:border-amber-300 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-blue-400/30 bg-slate-950/50 px-3.5 py-2.5 text-sm text-white placeholder-slate-400 focus:border-[#E5C158] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-amber-200/90">
+                <label className="block text-xs font-medium tracking-wider text-[#E5C158] uppercase">
                   Lời chúc riêng (tùy chọn)
                 </label>
                 <textarea
@@ -206,12 +206,12 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
                   value={draftMsg}
                   onChange={(e) => setDraftMsg(e.target.value)}
                   placeholder="Viết thêm lời chúc riêng của bạn gửi Thầy và các anh em giáo chức..."
-                  className="mt-1.5 w-full rounded-xl border border-blue-400/30 bg-slate-950/50 px-3.5 py-2.5 text-sm text-white placeholder-slate-400 focus:border-amber-300 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-blue-400/30 bg-slate-950/50 px-3.5 py-2.5 text-sm text-white placeholder-slate-400 focus:border-[#E5C158] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-amber-200/90">
+                <label className="block text-xs font-medium tracking-wider text-[#E5C158] uppercase">
                   Người gửi / Chữ ký
                 </label>
                 <input
@@ -219,7 +219,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
                   value={draftFrom}
                   onChange={(e) => setDraftFrom(e.target.value)}
                   placeholder="VD: Nguyễn Tuấn — Môn sinh CLB Vovinam Thanh Xuân"
-                  className="mt-1.5 w-full rounded-xl border border-blue-400/30 bg-slate-950/50 px-3.5 py-2.5 text-sm text-white placeholder-slate-400 focus:border-amber-300 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-blue-400/30 bg-slate-950/50 px-3.5 py-2.5 text-sm text-white placeholder-slate-400 focus:border-[#E5C158] focus:outline-none"
                 />
               </div>
 
@@ -234,7 +234,7 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-amber-400 px-5 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-300"
+                  className="rounded-xl bg-[#E5C158] px-5 py-2 text-sm font-semibold text-[#061533] hover:bg-[#F0D57A]"
                 >
                   Áp dụng &amp; Cập nhật link
                 </button>
@@ -247,9 +247,9 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
       {/* QR Code Modal */}
       {showQr && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-2xl border border-amber-300/30 bg-[#081c42] p-6 text-center text-slate-100 shadow-2xl">
+          <div className="w-full max-w-sm rounded-2xl border border-[#D4AF37]/45 bg-[#081c42] p-6 text-center text-slate-100 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-serif-display text-xl font-bold text-amber-200">
+              <h3 className="font-serif-classic text-xl font-bold text-[#F0D57A]">
                 Mã QR Thiệp Tri Ân
               </h3>
               <button
@@ -276,8 +276,8 @@ export const ExportShareBar: React.FC<ExportShareBarProps> = ({
               <div className="mt-4">
                 <a
                   href={qrDataUrl}
-                  download={`qr-${occasion.slug}.png`}
-                  className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-300"
+                  download={`qr-${occasion.accessSlug}.png`}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#E5C158] px-4 py-2 text-sm font-semibold text-[#061533] hover:bg-[#F0D57A]"
                 >
                   <Download className="h-4 w-4" />
                   Tải mã QR (PNG)

@@ -1,4 +1,4 @@
-import { CardPersonalization } from '../types/occasion';
+﻿import { CardPersonalization } from '../types/occasion';
 
 export function readPersonalizationFromUrl(defaultPresetId: string): CardPersonalization {
   const params = new URLSearchParams(window.location.search);
@@ -11,12 +11,12 @@ export function readPersonalizationFromUrl(defaultPresetId: string): CardPersona
 }
 
 export function buildShareUrl(
-  occasionSlug: string,
+  accessSlug: string,
   personalization: CardPersonalization,
   defaultPresetId: string
 ): string {
   const url = new URL(window.location.href);
-  url.pathname = `/card/${occasionSlug}`;
+  url.pathname = `/${accessSlug}`;
   url.search = '';
 
   if (personalization.presetId && personalization.presetId !== defaultPresetId) {
@@ -35,11 +35,23 @@ export function buildShareUrl(
   return url.toString();
 }
 
-export function getInitialOccasionSlug(fallbackSlug: string): string {
-  const path = window.location.pathname;
-  const match = path.match(/^\/card\/([a-z0-9-]+)/i);
-  if (match && match[1]) {
-    return match[1];
+export function extractAccessSlugFromPath(
+  pathname: string = window.location.pathname
+): string | null {
+  const cleaned = pathname.replace(/\/+$/, '');
+  if (!cleaned) {
+    return null;
   }
-  return fallbackSlug;
+
+  const cardPrefixed = cleaned.match(/^\/card\/([a-z0-9-]+)$/i);
+  if (cardPrefixed && cardPrefixed[1]) {
+    return cardPrefixed[1].toLowerCase();
+  }
+
+  const directSlug = cleaned.match(/^\/([a-z0-9-]+)$/i);
+  if (directSlug && directSlug[1]) {
+    return directSlug[1].toLowerCase();
+  }
+
+  return null;
 }
