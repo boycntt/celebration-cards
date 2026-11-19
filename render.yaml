@@ -1,4 +1,4 @@
-services:
+﻿services:
   - type: web
     name: vovinam-thanh-xuan-celebration-cards
     runtime: node
@@ -13,5 +13,9 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: HEARTBEAT_ENABLED
+        value: "true"
+      - key: HEARTBEAT_INTERVAL_MS
+        value: "300000"
       - key: MONGODB_URI
         sync: false

@@ -1,0 +1,37 @@
+﻿name: Keep-Alive Heartbeat
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: keep-alive-heartbeat
+  cancel-in-progress: true
+
+jobs:
+  heartbeat:
+    name: Ping Service Heartbeat
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping health endpoint & card route
+        env:
+          VAR_APP_URL: ${{ vars.APP_PUBLIC_URL }}
+          SECRET_APP_URL: ${{ secrets.APP_PUBLIC_URL }}
+          DEFAULT_APP_URL: https://vovinam-thanh-xuan-celebration-cards.onrender.com
+        run: |
+          TARGET_URL="${VAR_APP_URL:-${SECRET_APP_URL:-$DEFAULT_APP_URL}}"
+          TARGET_URL="${TARGET_URL%/}"
+          echo "Pinging health endpoint: ${TARGET_URL}/api/health?source=github-actions"
+          curl -fsS --retry 3 --retry-delay 5 --max-time 30 "${TARGET_URL}/api/health?source=github-actions"
+          echo ""
+          echo "Warming card URL: ${TARGET_URL}/vvntx2011"
+          CARD_STATUS=$(curl -sS --retry 3 --retry-delay 5 --max-time 30 -o /dev/null -w "%{http_code}" "${TARGET_URL}/vvntx2011")
+          echo "Card URL HTTP status: ${CARD_STATUS}"
+          if [ "$CARD_STATUS" -ge 500 ] || [ "$CARD_STATUS" -eq 000 ]; then
+            exit 1
+          fi
