@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-script: 'Dancing Script', cursive;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+}
+
+.font-serif-display {
+  font-family: var(--font-serif);
+}
+
+.font-script {
+  font-family: var(--font-script);
+}
+
+/* Gold Foil Text Gradient */
+.text-gold-foil {
+  background: linear-gradient(135deg, #fde68a 0%, #d4af37 45%, #fff3c4 65%, #b8860b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Subtle Parchment Surface */
+.bg-parchment {
+  background-color: #fffdf8;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08), transparent 45%),
+    radial-gradient(circle at 80% 85%, rgba(11, 78, 162, 0.06), transparent 45%),
+    linear-gradient(180deg, #fffdf8 0%, #fbf6ea 100%);
+}
+
+/* Deep Vovinam Silk Blue Background */
+.bg-vovinam-night {
+  background:
+    radial-gradient(ellipse at 18% 12%, rgba(29, 99, 220, 0.34), transparent 52%),
+    radial-gradient(ellipse at 82% 88%, rgba(212, 175, 55, 0.16), transparent 50%),
+    linear-gradient(160deg, #051129 0%, #08204c 48%, #07193a 100%);
+}
+
+/* Keyframes */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.45), 0 10px 25px -5px rgba(185, 28, 28, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(212, 175, 55, 0), 0 14px 30px -5px rgba(185, 28, 28, 0.7);
+  }
+}
+
+@keyframes cardReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-20deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 4.5s ease-in-out infinite;
+}
+
+.animate-seal-pulse {
+  animation: pulseGlow 2.4s ease-in-out infinite;
+}
+
+.animate-card-reveal {
+  animation: cardReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.shimmer-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 248, 220, 0.22) 50%,
+    transparent 100%
+  );
+  animation: shimmerSweep 6s ease-in-out infinite;
+  pointer-events: none;
+}

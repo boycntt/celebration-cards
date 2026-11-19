@@ -1,0 +1,69 @@
+name: CI/CD — Celebration Cards
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'hotfix/**'
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Typecheck & Production Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck & Vite production build
+        run: npm run build
+
+      - name: Verify critical build outputs
+        run: |
+          test -f dist/index.html
+          test -f dist/images/vovinam-thanh-xuan-20.jpg
+          echo "Build artifacts verified successfully."
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: celebration-cards-dist
+          path: dist/
+          retention-days: 7
+
+  deploy-render:
+    name: Trigger Render.com Deploy (CI-Gated)
+    needs: [ci]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render Deploy Hook (if configured)
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "CI passed. Triggering Render.com Deploy Hook..."
+            curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
+            echo "Render.com deploy triggered successfully."
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set."
+            echo "Render.com will deploy automatically via Blueprint (autoDeploy: true in render.yaml)."
+          fi
