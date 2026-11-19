@@ -114,7 +114,9 @@ export const TeachersDayCard: React.FC<TeachersDayCardProps> = ({
           {/* Letter Body */}
           <div className="font-serif-classic space-y-4 text-justify text-[15.5px] leading-[1.85] text-[#1E293B] sm:text-[16.5px]">
             {preset.paragraphs.map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
+              <p key={idx} className="indent-7 sm:indent-8">
+                {paragraph}
+              </p>
             ))}
 
             {customMessage && (
