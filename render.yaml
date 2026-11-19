@@ -13,6 +13,10 @@
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PUBLIC_BASE_URL
+        value: https://celebration-cards.onrender.com
+      - key: HEARTBEAT_URL
+        value: https://celebration-cards.onrender.com
       - key: HEARTBEAT_ENABLED
         value: "true"
       - key: HEARTBEAT_INTERVAL_MS

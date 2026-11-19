@@ -22,7 +22,7 @@ jobs:
         env:
           VAR_APP_URL: ${{ vars.APP_PUBLIC_URL }}
           SECRET_APP_URL: ${{ secrets.APP_PUBLIC_URL }}
-          DEFAULT_APP_URL: https://vovinam-thanh-xuan-celebration-cards.onrender.com
+          DEFAULT_APP_URL: https://celebration-cards.onrender.com
         run: |
           TARGET_URL="${VAR_APP_URL:-${SECRET_APP_URL:-$DEFAULT_APP_URL}}"
           TARGET_URL="${TARGET_URL%/}"
