@@ -1,4 +1,4 @@
-export type ParticleTheme = 'bamboo-gold' | 'blossom-tet' | 'petals-pink' | 'confetti-festive';
+﻿export type ParticleTheme = 'bamboo-gold' | 'blossom-tet' | 'petals-pink' | 'confetti-festive';
 
 export interface RecipientPreset {
   id: string;
@@ -23,6 +23,9 @@ export interface WishItem {
 
 export interface OccasionConfig {
   slug: string;
+  accessSlug: string;
+  validFrom: string;
+  validTo: string;
   title: string;
   subtitle: string;
   dateBadge: string;

@@ -1,7 +1,10 @@
-import { OccasionConfig } from '../../core/types/occasion';
+﻿import { OccasionConfig } from '../../core/types/occasion';
 
 export const teachersDay2011Config: OccasionConfig = {
   slug: '20-11-vovinam-thanh-xuan',
+  accessSlug: 'vovinamthanhxuan20112026',
+  validFrom: '2026-11-15T00:00:00+07:00',
+  validTo: '2026-11-25T23:59:59+07:00',
   title: 'Ngày Nhà Giáo Việt Nam 20/11',
   subtitle: 'Tri ân Võ sư Lữ Thanh Xuân & Các Anh Em Giáo Chức CLB Vovinam Thanh Xuân',
   dateBadge: '20 / 11',
@@ -14,7 +17,7 @@ export const teachersDay2011Config: OccasionConfig = {
   heroImageCaption: '20 Năm Vovinam Thanh Xuân — Khung Trời Kỷ Niệm',
   envelopeTitle: 'Thiệp Tri Ân 20/11',
   envelopeSubtitle: 'CLB Vovinam Thanh Xuân',
-  sealText: 'Tri Ân',
+  sealText: 'Mở Thiệp',
   motto: 'Bàn tay thép đặt lên trái tim từ ái — Cương Nhu Phối Triển',
   presets: [
     {

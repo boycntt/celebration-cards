@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
-import { Sparkles, MailOpen } from 'lucide-react';
+import { MailOpen } from 'lucide-react';
 import { OccasionConfig } from '../types/occasion';
 
 interface EnvelopeIntroProps {
@@ -20,39 +20,40 @@ export const EnvelopeIntro: React.FC<EnvelopeIntroProps> = ({
     if (opening) return;
     setOpening(true);
 
-    // Ceremonial Vovinam gold, blue & red confetti burst
+    // Ceremonial Vovinam gold, blue & crimson confetti burst
     confetti({
-      particleCount: 70,
-      spread: 75,
+      particleCount: 60,
+      spread: 70,
       origin: { y: 0.58 },
-      colors: ['#D4AF37', '#FDE68A', '#1D63DC', '#DC2626', '#FFFFFF'],
+      colors: ['#D4AF37', '#F0D57A', '#1D63DC', '#9B1C1C', '#FFFFFF'],
     });
 
     window.setTimeout(() => {
       onOpen();
-    }, 650);
+    }, 600);
   };
 
   return (
-    <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-10">
+    <div className="relative z-10 flex min-h-[calc(100vh-76px)] flex-col items-center justify-center px-4 py-8">
       <div
         className={`w-full max-w-lg transition-all duration-700 ease-out ${
-          opening ? 'scale-105 opacity-0 -translate-y-6' : 'scale-100 opacity-100'
+          opening ? 'scale-[1.03] opacity-0 -translate-y-5' : 'scale-100 opacity-100'
         }`}
       >
-        {/* Top Ceremonial Badge */}
+        {/* Top Ceremonial Heading */}
         <div className="mb-6 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/35 bg-amber-400/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-amber-200 backdrop-blur-sm">
-            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+          <p className="font-serif-classic text-xs font-semibold tracking-[0.22em] text-[#E5C158] uppercase sm:text-[13px]">
             {occasion.dateLabel}
-          </span>
-          <h1 className="mt-4 font-serif-display text-3xl font-bold tracking-wide text-gold-foil sm:text-4xl">
+          </p>
+          <h1 className="font-serif-classic mt-2.5 text-3xl font-bold tracking-wide text-[#F0D57A] sm:text-4xl">
             {occasion.envelopeTitle}
           </h1>
-          <p className="mt-1.5 text-sm text-blue-200/80">{occasion.organization}</p>
+          <p className="mt-1.5 text-xs tracking-[0.14em] text-[#CFE0F5] uppercase sm:text-sm">
+            {occasion.organization}
+          </p>
         </div>
 
-        {/* Interactive Envelope Container */}
+        {/* Interactive Formal Silk Envelope Container */}
         <div
           role="button"
           tabIndex={0}
@@ -63,63 +64,53 @@ export const EnvelopeIntro: React.FC<EnvelopeIntroProps> = ({
               handleOpen();
             }
           }}
-          className="group relative cursor-pointer overflow-hidden rounded-2xl border border-amber-300/35 bg-gradient-to-br from-[#0b2a66] via-[#09204d] to-[#061534] p-1 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.75)] transition-transform duration-300 hover:scale-[1.015] focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+          className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-[#D4AF37]/60 bg-[#081F4A] p-2 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.75)] transition-colors duration-300 hover:border-[#F0D57A] focus:outline-none focus:ring-2 focus:ring-[#E5C158]/70"
         >
-          <div className="relative overflow-hidden rounded-xl border border-amber-300/20 px-6 py-9 sm:px-9 sm:py-11">
-            {/* Decorative Envelope Flap V-lines */}
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 400 130"
-              preserveAspectRatio="none"
-              className="pointer-events-none absolute inset-x-0 top-0 h-28 w-full opacity-40 transition-transform duration-500 group-hover:translate-y-0.5"
-            >
-              <path
-                d="M0 0 L200 115 L400 0"
-                fill="rgba(29, 99, 220, 0.25)"
-                stroke="#D4AF37"
-                strokeWidth="1.2"
-              />
-            </svg>
+          <div className="relative overflow-hidden rounded-lg border border-[#D4AF37]/35 px-6 py-8 sm:px-9 sm:py-10">
+            {/* Straight Ceremonial Corner Marks */}
+            <span className="pointer-events-none absolute top-3 left-3 h-4 w-4 border-t-2 border-l-2 border-[#D4AF37]/60" />
+            <span className="pointer-events-none absolute top-3 right-3 h-4 w-4 border-t-2 border-r-2 border-[#D4AF37]/60" />
+            <span className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 border-b-2 border-l-2 border-[#D4AF37]/60" />
+            <span className="pointer-events-none absolute bottom-3 right-3 h-4 w-4 border-b-2 border-r-2 border-[#D4AF37]/60" />
 
-            {/* Corner Gold Accents */}
-            <span className="pointer-events-none absolute top-3 left-3 h-5 w-5 border-t-2 border-l-2 border-amber-400/50" />
-            <span className="pointer-events-none absolute top-3 right-3 h-5 w-5 border-t-2 border-r-2 border-amber-400/50" />
-            <span className="pointer-events-none absolute bottom-3 left-3 h-5 w-5 border-b-2 border-l-2 border-amber-400/50" />
-            <span className="pointer-events-none absolute bottom-3 right-3 h-5 w-5 border-b-2 border-r-2 border-amber-400/50" />
-
-            {/* Club Photo Mini Preview inside Envelope */}
+            {/* Uncropped Square Framed Club Photo */}
             {occasion.heroImage && (
-              <div className="relative mx-auto mb-6 h-24 w-24 overflow-hidden rounded-full border-2 border-amber-300/70 shadow-lg ring-4 ring-blue-500/20">
+              <div className="relative mx-auto mb-6 h-36 w-36 overflow-hidden rounded-xl border border-[#D4AF37]/70 bg-[#061533] p-1 shadow-md sm:h-44 sm:w-44">
                 <img
                   src={occasion.heroImage}
                   alt={occasion.organization}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full rounded-lg object-contain"
                 />
               </div>
             )}
 
             {/* Recipient Address */}
             <div className="relative text-center">
-              <p className="text-xs font-medium uppercase tracking-[0.22em] text-amber-300/80">
+              <p className="font-serif-classic text-xs font-semibold tracking-[0.22em] text-[#E5C158] uppercase">
                 Trân trọng kính gửi
               </p>
-              <p className="mt-2 font-serif-display text-2xl font-bold text-white sm:text-3xl">
+              <p className="font-serif-classic mt-2 text-2xl leading-snug font-bold text-white sm:text-[28px]">
                 {recipientDisplay}
               </p>
-              <p className="mt-2 text-xs italic text-blue-200/80 sm:text-sm">
+              <div className="my-4 flex items-center justify-center gap-3" aria-hidden="true">
+                <span className="h-px w-12 bg-[#D4AF37]/50" />
+                <span className="h-1.5 w-1.5 bg-[#E5C158]" />
+                <span className="h-px w-12 bg-[#D4AF37]/50" />
+              </div>
+              <p className="font-serif-classic text-sm italic text-[#CFE0F5] sm:text-[15px]">
                 “{occasion.motto}”
               </p>
             </div>
 
-            {/* Wax Seal Button */}
-            <div className="mt-8 flex flex-col items-center">
-              <div className="animate-seal-pulse flex h-20 w-20 flex-col items-center justify-center rounded-full border-2 border-amber-300/80 bg-gradient-to-br from-red-700 via-red-800 to-red-950 text-amber-100 shadow-xl transition-transform duration-300 group-hover:scale-110">
-                <MailOpen className="h-5 w-5 text-amber-200" />
-                <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-amber-200">
+            {/* Dignified Upright Seal Button */}
+            <div className="mt-7 flex flex-col items-center">
+              <div className="flex h-20 w-20 flex-col items-center justify-center rounded-full border-2 border-[#E5C158] bg-[#8E1919] text-[#FDE68A] shadow-lg ring-4 ring-[#8E1919]/40 transition-transform duration-300 group-hover:scale-105">
+                <MailOpen className="h-5 w-5 text-[#F0D57A]" />
+                <span className="font-serif-classic mt-1 text-[10px] font-bold tracking-[0.12em] text-[#FDE68A] uppercase">
                   {occasion.sealText}
                 </span>
               </div>
-              <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.18em] text-amber-200/90 transition-colors group-hover:text-amber-100">
+              <span className="font-serif-classic mt-4 text-xs font-semibold tracking-[0.18em] text-[#E5C158] uppercase transition-colors group-hover:text-[#F0D57A]">
                 Chạm để mở thiệp tri ân
               </span>
             </div>

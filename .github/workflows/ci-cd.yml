@@ -35,6 +35,9 @@ jobs:
       - name: Typecheck & Vite production build
         run: npm run build
 
+      - name: Syntax check backend server
+        run: node --check server/index.mjs
+
       - name: Verify critical build outputs
         run: |
           test -f dist/index.html
