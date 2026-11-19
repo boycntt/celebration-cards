@@ -2,6 +2,7 @@
 const MIN_INTERVAL_MS = 30 * 1000;
 const WARMUP_DELAY_MS = 15 * 1000;
 const REQUEST_TIMEOUT_MS = 10 * 1000;
+const DEFAULT_PUBLIC_URL = 'https://celebration-cards.onrender.com';
 
 let intervalTimer = null;
 let warmupTimer = null;
@@ -74,7 +75,14 @@ function resolveEnvTargetUrl() {
 }
 
 function resolveTargetUrl() {
-  return resolveEnvTargetUrl() || observedOrigin;
+  const explicitOrObserved = resolveEnvTargetUrl() || observedOrigin;
+  if (explicitOrObserved) {
+    return explicitOrObserved;
+  }
+  if (process.env.NODE_ENV === 'production') {
+    return DEFAULT_PUBLIC_URL;
+  }
+  return '';
 }
 
 function isLocalHost(host) {

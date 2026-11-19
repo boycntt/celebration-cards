@@ -108,11 +108,11 @@ Dự án đã tích hợp sẵn **GitHub Actions** (`.github/workflows/ci-cd.yml
 - **Start Command:** `npm start`
 - **Health Check Path:** `/api/health`
 - **Environment Variables:** `NODE_ENV=production`, `MONGODB_URI=<chuỗi kết nối MongoDB Atlas>` (lưu trên Render Dashboard, không commit vào Git).
-- Sau khi deploy, chia sẻ đường dẫn `https://<ten-service>.onrender.com/vvntx2011` trực tiếp vào nhóm Zalo/Facebook.
+- Sau khi deploy, chia sẻ đường dẫn `https://celebration-cards.onrender.com/vvntx2011` trực tiếp vào nhóm Zalo/Facebook.
 
 ## Cơ chế Heartbeat & Keep-Alive (Đảm bảo URL hoạt động lâu dài)
 
-Để đường dẫn thiệp (`https://<ten-service>.onrender.com/vvntx2011`) luôn phản hồi nhanh, hạn chế tối đa tình trạng Render Free Tier đưa service vào trạng thái ngủ (spin-down sau 15 phút không có truy cập) và giữ kết nối MongoDB Atlas ổn định, hệ thống áp dụng cơ chế **Heartbeat 3 lớp**:
+Để đường dẫn thiệp (`https://celebration-cards.onrender.com/vvntx2011`) luôn phản hồi nhanh, hạn chế tối đa tình trạng Render Free Tier đưa service vào trạng thái ngủ (spin-down sau 15 phút không có truy cập) và giữ kết nối MongoDB Atlas ổn định, hệ thống áp dụng cơ chế **Heartbeat 3 lớp**:
 
 1. **Server Self-Ping & MongoDB Keep-Alive (`server/lib/heartbeat.mjs`, `server/lib/db.mjs`)**:
    - Server tự động định kỳ mỗi `5 phút` gọi `pingDb()` giữ ấm kết nối MongoDB, tự gửi `GET /api/health?source=self` và làm ấm route thiệp đang mở (`/:slug?source=self-warmup`).
